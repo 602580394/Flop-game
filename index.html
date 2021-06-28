@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        *{
+            padding: 0;
+            margin: 0;
+        }
+        .title{
+            height: 60px;
+            line-height: 60px;
+            font-size: 26px;
+            color: #649dc4;
+            text-align: center;
+        }
+        .box{
+            height: 600px;
+            width: 600px;
+            margin: 0 auto;
+        }
+        .block{
+            width: 146px;
+            height: 146px;
+            border: 2px solid #dddddd;
+            float: left;
+            background-color: #f0f0f0;
+        }
+        .block:hover{
+            background-color: #2b84e0;
+        }
+        .pic{
+            background: url(images/1.png) center center no-repeat;
+            height: 100%;
+            background-size: 75%;
+            transform: scaleX(0);
+            transition: transform 0.5s;
+        }
+        /* .block:hover .pic{
+            transform: scaleX(1);
+        } */
+        /* 4 */
+        .box .block.on .pic{
+            transform:scaleX(1);
+        }
+        /* 5 */
+        .box .block.done{
+            background: #a5adb4;
+        }
+        .Prompt{
+            float:right;
+        }
+        select{
+            margin-right: 100px;
+            outline:none;
+            appearance: none;
+            background:url(images/arrow_down.png) no-repeat right center;
+            width: 100px;
+            height: 20px
+        }
+        .foot,.progress{
+            color: red;
+            border: none;
+            background-color:white;
+        }
+        
+    </style>
+</head>
+<body>
+    <div class="title">js记忆翻牌小游戏</div>
+    <div class="box">
+        <!-- <div class="box_one">
+            <div class="box_two"></div>
+        </div>
+        <div class="box_one">
+            <div class="box_two"></div>
+        </div>
+        <div class="box_one">
+            <div class="box_two"></div>
+        </div>
+        <div class="box_one">
+            <div class="box_two"></div>
+        </div>
+        <div class="box_one">
+            <div class="box_two"></div>
+        </div>
+        <div class="box_one">
+            <div class="box_two"></div>
+        </div>
+        <div class="box_one">
+            <div class="box_two"></div>
+        </div>
+        <div class="box_one">
+            <div class="box_two"></div>
+        </div>
+        <div class="box_one">
+            <div class="box_two"></div>
+        </div>
+        <div class="box_one">
+            <div class="box_two"></div>
+        </div>
+        <div class="box_one">
+            <div class="box_two"></div>
+        </div>
+        <div class="box_one">
+            <div class="box_two"></div>
+        </div>
+        <div class="box_one">
+            <div class="box_two"></div>
+        </div>
+        <div class="box_one">
+            <div class="box_two"></div>
+        </div>
+        <div class="box_one">
+            <div class="box_two"></div>
+        </div>
+        <div class="box_one">
+            <div class="box_two"></div>
+        </div> -->
+    </div>
+
+    <div class="Prompt">
+    <div>你已经进行了<input value="0步" disabled class="foot"></div>
+    <div>游戏进度:<input value="0/8" disabled class="progress"></div>
+    <select>
+        <option value="0" disabled>--选择难度--</option>
+        <option value="1">难度1:2*2</option>
+        <option value="2" selected="selected">难度2:4*4</option>
+        <option value="3">难度3:6*6</option>
+    </select>
+    <br>
+    <button>新游戏</button>
+    </div>
+</body>
+<script>
+    var box = document.querySelector(".box");
+    var boxWidth = box.offsetWidth;
+    var boxHeight = box.offsetHeight;
+
+    var newfoot = document.querySelector(".foot");
+    var newprogress = document.querySelector(".progress");
+
+
+    function renderBlock(currentLevel){
+        var level=currentLevel;
+        var blocks = (2*level)*(2*level);
+        ///
+        var imgArr = createBlockBgImg( blocks );
+        ///
+        var blockWidth = boxWidth/(level*2)-4;
+        var blockHeight = boxHeight/(level*2)-4;
+
+        box.innerHTML = "";
+
+        for(var i = 0; i<blocks ; i++){
+            var newBlock  = document.createElement("div");
+            newBlock.className = "block";
+            ////
+            newBlock.setAttribute("data-num", imgArr[i].num );
+            ////
+            newBlock.style.width = blockWidth+"px";
+            newBlock.style.height = blockHeight+"px";
+            var newPic = document.createElement("div");
+            newPic.className = "pic";
+            ///
+            newPic.style.backgroundImage = "url("+imgArr[i].imgSrc+")";
+            ///
+            newBlock.appendChild(newPic);
+            box.appendChild(newBlock);
+        }
+    }
+    renderBlock(2);
+    // 第二次
+    var select=document.querySelector("select")
+    select.onchange=function(){
+        var level = select.value;
+        renderBlock(level);
+    }
+    // 第三次
+    function shuffleArr( targetArr ){
+        return targetArr.sort(function(){
+            return Math.random()-0.5;
+        });
+    }
+
+        // 根据图片数量生成打乱的图片地址数组
+    function createBlockBgImg( currentBlocks ){
+        var allimgsArr = [];// 定义一个所有图片数组
+        for(var i = 1; i <= 20; i++ ){
+            // push方法用于把()里面的值添加到数组中
+            allimgsArr.push({
+                num: i,
+                imgSrc: "images/"+i+".png"
+            });
+        }
+        // 打乱数组
+        allimgsArr = shuffleArr( allimgsArr );
+
+        // 根据块数总数量,生成一对一对的图片数据
+        var halfBlocks = currentBlocks/2;
+        // 一对一对数据的图片数组
+        var imgArr = [];
+        for(var j = 0; j < halfBlocks; j++ ){
+            imgArr.push( allimgsArr[j] , allimgsArr[j] ); 
+        }
+        // 打乱数组
+        imgArr = shuffleArr( imgArr );
+        // 返回这个图片数组
+        return imgArr;
+    }
+    // 第四次
+            // 使用事件委托给每个块盒子绑定点击事件
+        // 定义一个空的比对数组,每次点击的时候,
+        // 可以把被点击的dom元素和当前dom元素自定义数组索引号组成对象放进这个比对数组中;
+
+        // 定义一个比对数组
+    var judgeArr = [];
+    var a=0;
+    box.onclick = function( e ){
+        if( e.target.className == "block"){// 判断点击的目标dom元素h的类名是否为block
+            // 当前被点击的block盒子,需要加上一个类名on
+            e.target.classList.add("on");
+            // 获取自定义属性
+            var num = e.target.getAttribute("data-num");
+            // 把被点击的dom元素和当前dom元素自定义数组索引号组成对象放进这个比对数组中;
+            judgeArr.push({
+                dom: e.target,
+                num: num ,
+            })
+        }
+        if( judgeArr.length % 2 == 0 ){
+            /////比对两个数组元素/////
+            judgePic( judgeArr );
+        }
+        a=a+1;
+        newfoot.value = ""+a+"步";
+    }
+
+
+    
+        // 功能5: 比对每两次点击的块盒子中的图片是否为同一张
+        // 当比对数组的长度为2的时候,我们就需要判断里面两个对象的索引号是否相等,
+        // 因为索引号相等的话,就代表他们是同一张图片;
+        // 如果图案一致则配对，两次点击的图片，不盖回来; 高亮比对成功的两个图片;
+        // 如果图案不一致则盖回去; 注意需要清空比对数组,方便下次进行比对
+
+        // 封装比对两个图片数组元素的函数
+        var b=0;
+        function judgePic( targetArr){
+            
+            // 得到数组的第一个元素
+            var item1 = targetArr[0];
+            // 得到数组的第二个元素
+            var item2 = targetArr[1];
+           
+            if( item1.num == item2.num ){// 判断两个数组元素的索引号是否相同 如果相同,他们就是同一个图片
+                // 高亮比对成功的两个图片
+                item1.dom.classList.add("done");
+                item2.dom.classList.add("done");
+                b=b+1;
+            }else{
+                // 如果图案不一致则盖回去
+                setTimeout(function(){
+                    item1.dom.classList.remove("on");
+                    item2.dom.classList.remove("on");
+                }, 800)
+            }
+
+            // 注意需要清空比对数组,方便下次进行比对
+            judgeArr.length = 0;
+            // newprogress.value = ""+b+"/"+c+"";
+        }
+</script>
+
+
+</html>
